@@ -348,9 +348,6 @@ sleep_day <- read_csv("sleepDay_merged.csv") %>%
 merged_data <- daily_activity %>%
   left_join(sleep_day, by = c("id", "activity_date" = "sleep_day")) %>%
   filter(total_steps > 0)
-
----
+```
 
 **End of report.**
-
----
