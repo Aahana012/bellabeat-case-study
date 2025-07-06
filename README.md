@@ -7,10 +7,9 @@ Analysis of Bellabeat smart device data to uncover user activity and sleep patte
 2. Data Description
 3. Data Cleaning and Preparation
 4. Exploratory Data Analysis
-5. Correlation and Insights
-6. Visualizations
-7. Conclusions and Recommendations
-8. Appendix
+5. Correlation, Insights, and Visualizations
+6. Conclusions and Recommendations
+7. Appendix
 
 
 ## 1. Introduction
@@ -130,39 +129,223 @@ I conducted exploratory data analysis (EDA) to understand user behavior, activit
 
 **Visualizations Created:**
 
-- Histogram of daily steps (![distribution_of_daily_steps](https://github.com/user-attachments/assets/988eb118-8429-496b-ba7f-0194d36d6ce9))
-- Scatter plot of steps vs. calories burned with a linear trendline (![steps_vs_cals_burned](https://github.com/user-attachments/assets/91509be7-e416-454b-9d59-7fd6b2ff4b6a))
-- Bar chart of average steps by day of the week (![avg_daily_steps_by_day_of_wk](https://github.com/user-attachments/assets/a320473c-05cb-42f5-a3f5-eb658283e6e6))
-- Boxplot of sleep duration distribution (![sleep_duration_dist](https://github.com/user-attachments/assets/bc622955-29dc-4119-967e-b8409a9fa632))
-- Correlation heatmap among numeric variables (![corr_matrix_of_variables](https://github.com/user-attachments/assets/05c7c6b6-99a8-4ea2-81df-c4ea3d9ee2f5))
+- Histogram of daily steps ![distribution_of_daily_steps](https://github.com/user-attachments/assets/988eb118-8429-496b-ba7f-0194d36d6ce9)
+- Scatter plot of steps vs. calories burned with a linear trendline ![steps_vs_cals_burned](https://github.com/user-attachments/assets/91509be7-e416-454b-9d59-7fd6b2ff4b6a)
+- Bar chart of average steps by day of the week ![avg_daily_steps_by_day_of_wk](https://github.com/user-attachments/assets/a320473c-05cb-42f5-a3f5-eb658283e6e6)
+- Boxplot of sleep duration distribution ![sleep_duration_dist](https://github.com/user-attachments/assets/bc622955-29dc-4119-967e-b8409a9fa632)
+- Correlation heatmap among numeric variables ![corr_matrix_of_variables](https://github.com/user-attachments/assets/05c7c6b6-99a8-4ea2-81df-c4ea3d9ee2f5)
 
 These analyses provided insights into typical activity and sleep behaviors among users, highlighting relationships between key metrics.
 
 
-## 5. Correlation and Insights
+## 5. Correlation, Insights, and Visualizations
 
-This section summarizes the key patterns and relationships observed in the data and visualizations.
+This section summarizes the key patterns and relationships observed in the data, illustrated with supporting visualizations.
 
-**Steps and Calories:**
-- A moderate positive correlation (~0.56) was identified between `total_steps` and `calories` burned.
-- This indicates that higher daily step counts are associated with higher energy expenditure, as expected.
+---
 
-**Steps by Day of the Week:**
-- Average daily steps were highest on **Tuesdays** and **Saturdays** (~8,950 steps) and lowest on **Sundays** (~7,600 steps).
-- This pattern suggests that users tend to be more active earlier in the week and on weekends.
+### Histogram of Daily Steps
 
-**Sleep Duration:**
-- The distribution of sleep duration showed variability across users, ranging from ~1 hour to ~13 hours.
-- Approximately 53% of records lacked sleep data, indicating either incomplete tracking or less engagement with sleep monitoring features.
+**CODE SNIPPET:**
+ggplot(analyzed_data, aes(x = total_steps)) +
+  geom_histogram(binwidth = 2000, fill = "skyblue", color = "black") +
+  labs(
+    title = "Distribution of Daily Steps",
+    x = "Total Steps per Day",
+    y = "Count of Days"
+  ) +
+  theme_minimal()
 
-**Correlation Heatmap:**
-- The correlation matrix highlighted:
-  - Strong correlation between `total_distance` and `total_steps`, reflecting that distance is largely determined by step count.
-  - Positive correlation between `very_active_minutes` and both `total_steps` and `calories`.
-  - No strong correlations were found between activity variables and sleep duration in this dataset.
 
-**Engagement Trends:**
-- Many users consistently logged steps and calories but were inconsistent with sleep tracking.
-- This gap presents an opportunity for targeted interventions to increase engagement with sleep monitoring.
+**PLOT:**
+![distribution_of_daily_steps](https://github.com/user-attachments/assets/988eb118-8429-496b-ba7f-0194d36d6ce9)
 
-These insights informed the recommendations and potential actions described in the next section.
+**FINDING:** The distribution of daily steps is right-skewed, with most users recording between **4,000 and 10,000 steps per day**. A small subset consistently achieved over 15,000 steps, suggesting varying levels of activity among users.
+
+---
+
+### Scatter Plot of Steps vs. Calories Burned
+
+**CODE SNIPPET:**
+cor(analyzed_data$total_steps, analyzed_data$calories, use = "complete.obs")
+	[1] 0.5619815
+ggplot(analyzed_data, aes(x = total_steps, y = calories)) +
++     geom_point(alpha = 0.6) +
++     geom_smooth(method = "lm", se = FALSE, color = "blue") +
++     labs(title = "Steps vs Calories Burned", x = "Total Steps", y = "Calories")
+
+
+**PLOT:**
+![steps_vs_cals_burned](https://github.com/user-attachments/assets/91509be7-e416-454b-9d59-7fd6b2ff4b6a)
+
+**FINDING:** There is a **moderate positive correlation (~0.56)** between daily steps and calories burned. As expected, higher step counts are associated with greater caloric expenditure.
+
+---
+
+### Bar Chart of Average Steps by Day of the Week
+
+**CODE SNIPPET:**
+analyzed_data %>%
+  mutate(day_of_week = weekdays(as.Date(activity_date))) %>%
+  group_by(day_of_week) %>%
+  summarise(mean_steps = mean(total_steps, na.rm = TRUE)) %>%
+  ggplot(aes(x = reorder(day_of_week, -mean_steps), y = mean_steps)) +
+  geom_bar(stat = "identity", fill = "lightgreen") +
+  labs(
+    title = "Average Daily Steps by Day of Week",
+    x = "Day of Week",
+    y = "Average Steps"
+  ) +
+  theme_minimal()
+
+
+**PLOT:**
+![avg_daily_steps_by_day_of_wk](https://github.com/user-attachments/assets/a320473c-05cb-42f5-a3f5-eb658283e6e6)
+
+**FINDING:** Average daily steps peaked on **Tuesdays and Saturdays (~8,950 steps)**, with the lowest activity on **Sundays (~7,600 steps)**. This suggests users tend to be more active during the early week and weekends.
+
+---
+
+### Boxplot of Sleep Duration Distribution
+
+**CODE SNIPPET:**
+summary(merged_data$total_minutes_asleep)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+   58.0   361.0   432.5   419.2   490.0   796.0     453 
+> ggplot(merged_data %>% filter(!is.na(total_minutes_asleep)),
++        aes(x = "Sleep", y = total_minutes_asleep / 60)) +
++     geom_boxplot(fill = "lightpink") +
++     labs(
++         title = "Sleep Duration Distribution",
++         x = "",
++         y = "Sleep Duration (Hours)"
++     ) +
++     theme_minimal()
+
+
+**PLOT:**
+![sleep_duration_dist](https://github.com/user-attachments/assets/bc622955-29dc-4119-967e-b8409a9fa632)
+
+**FINDING:** Sleep duration varied substantially, ranging from approximately **1 to 13 hours per night**. The median sleep duration was around **7.2 hours**, but over half of the records lacked sleep data, highlighting inconsistent sleep tracking.
+
+---
+
+### Correlation Heatmap Among Numeric Variables
+
+**CODE SNIPPET:**
+corrplot(cor_matrix, method = "color",
++          type = "upper",
++          tl.cex = 0.7,
++          tl.col = "black",
++          tl.srt = 45,
++          addCoef.col = "black",
++          number.cex = 0.6,
++          diag = FALSE) 
+
+
+**PLOT:**
+
+![corr_matrix_of_variables](https://github.com/user-attachments/assets/5a1d0963-9592-43ed-8d46-a0cc6415e8b2)
+
+**FINDING:** The correlation matrix shows:
+- A **strong correlation between total distance and total steps (r ≈ 0.98)**, as steps primarily determine distance.
+- Positive relationships between **very active minutes, total steps, and calories burned**.
+- No strong correlation between sleep duration and activity metrics.
+
+---
+
+### Engagement Trends
+
+Many users consistently logged steps and calories but were **less consistent in tracking sleep**. This presents an opportunity for targeted communication or app features to encourage more complete health monitoring.
+
+---
+
+### Recommendation
+
+These insights inform targeted recommendations to improve user engagement and promote healthier behaviors, as detailed in the next section.
+
+
+## 6. Conclusions and Recommendations
+
+Based on the analysis of activity and sleep data, several important patterns and opportunities were identified:
+
+---
+
+### Key Conclusions
+
+- **Activity Tracking Engagement:**  
+  Most users regularly tracked steps and calories, with daily step counts clustering between 4,000–10,000 steps. This indicates a generally moderate level of engagement with activity monitoring.
+
+- **Positive Relationship Between Steps and Calories Burned:**  
+  A moderate positive correlation (~0.56) was observed, confirming that increased step counts are associated with higher energy expenditure.
+
+- **Variation by Day of the Week:**  
+  Users were most active on **Tuesdays and Saturdays**, and least active on **Sundays**. This suggests activity interventions or challenges could be more effective when scheduled early in the week or over the weekend.
+
+- **Low Sleep Tracking Participation:**  
+  Over half of records lacked sleep duration data, highlighting inconsistent use of sleep monitoring features.
+
+- **Strong Correlations Among Activity Metrics:**  
+  Total steps, distance, and active minutes were highly interrelated, reflecting expected relationships between intensity and caloric burn.
+
+---
+
+### Recommendations
+
+To improve user engagement and promote healthier behaviors, the following actions are recommended:
+
+1. **Promote Consistent Sleep Tracking:**  
+   Develop targeted in-app reminders, educational content, or incentives to encourage users to log their sleep consistently.
+
+2. **Leverage Weekly Activity Trends:**  
+   Introduce personalized challenges or notifications to boost activity on lower-engagement days like Sundays.
+
+3. **Highlight Step and Calorie Goals:**  
+   Use visual feedback to reinforce the positive connection between steps and caloric expenditure, motivating users to meet or exceed daily goals.
+
+4. **Enable Goal Customization:**  
+   Allow users to set personalized step and sleep goals that align with their lifestyle and fitness levels.
+
+5. **Provide Insights and Rewards:**  
+   Offer periodic reports summarizing progress and recognizing milestones to reinforce positive habits and long-term engagement.
+
+---
+
+By implementing these recommendations, the platform can support users in maintaining consistent activity and sleep tracking, ultimately fostering healthier behaviors and improving overall user satisfaction.
+
+
+## 7. Appendix
+
+**Data Files**
+- `dailyActivity_merged.csv`
+- `sleepDay_merged.csv`
+- `cleaned_merged_data.csv`
+
+**R Packages**
+- tidyverse
+- janitor
+- lubridate
+- ggplot2
+- corrplot
+
+**Key Steps**
+- Cleaned and merged data with `lubridate` for date parsing.
+- Filtered rows with positive activity.
+- Generated visualizations (histogram, scatter plot, boxplot, correlation heatmap).
+
+**Example Code**
+
+```r
+# Load and merge
+daily_activity <- read_csv("dailyActivity_merged.csv") %>%
+  clean_names() %>%
+  mutate(activity_date = mdy(activity_date))
+
+sleep_day <- read_csv("sleepDay_merged.csv") %>%
+  clean_names() %>%
+  mutate(sleep_day = as.Date(mdy_hms(sleep_day)))
+
+merged_data <- daily_activity %>%
+  left_join(sleep_day, by = c("id", "activity_date" = "sleep_day")) %>%
+  filter(total_steps > 0)
+
