@@ -147,14 +147,14 @@ This section summarizes the key patterns and relationships observed in the data,
 ### Histogram of Daily Steps
 
 **CODE SNIPPET:**
-ggplot(analyzed_data, aes(x = total_steps)) +
-  geom_histogram(binwidth = 2000, fill = "skyblue", color = "black") +
-  labs(
-    title = "Distribution of Daily Steps",
-    x = "Total Steps per Day",
-    y = "Count of Days"
-  ) +
-  theme_minimal()
+ggplot(analyzed_data, aes(x = total_steps)) 
++	geom_histogram(binwidth = 2000, fill = "skyblue", color = "black") 
++  	labs(
+    		title = "Distribution of Daily Steps",
+    		x = "Total Steps per Day",
+    		y = "Count of Days"
+  		) 
++  	theme_minimal()
 
 
 **PLOT:**
@@ -186,17 +186,17 @@ ggplot(analyzed_data, aes(x = total_steps, y = calories)) +
 
 **CODE SNIPPET:**
 analyzed_data %>%
-  mutate(day_of_week = weekdays(as.Date(activity_date))) %>%
-  group_by(day_of_week) %>%
-  summarise(mean_steps = mean(total_steps, na.rm = TRUE)) %>%
-  ggplot(aes(x = reorder(day_of_week, -mean_steps), y = mean_steps)) +
-  geom_bar(stat = "identity", fill = "lightgreen") +
-  labs(
++	mutate(day_of_week = weekdays(as.Date(activity_date))) %>%
++ 	group_by(day_of_week) %>%
++	summarise(mean_steps = mean(total_steps, na.rm = TRUE)) %>%
++  	ggplot(aes(x = reorder(day_of_week, -mean_steps), y = mean_steps)) 
++  	geom_bar(stat = "identity", fill = "lightgreen") 
++  labs(
     title = "Average Daily Steps by Day of Week",
     x = "Day of Week",
     y = "Average Steps"
-  ) +
-  theme_minimal()
+  ) 
++	heme_minimal()
 
 
 **PLOT:**
